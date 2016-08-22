@@ -1,6 +1,8 @@
 package com.augmentis.ayp.photogallery;
 
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -11,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -24,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -245,18 +249,58 @@ public class PhotoGalleryFragment extends Fragment{
     /**
      * ViewHolder
      */
-    class PhotoHolder extends RecyclerView.ViewHolder {
+    class PhotoHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
 //        TextView mText;
         ImageView mPhoto;
+        private String mBigUrl;
 
         public PhotoHolder(View itemView) {
             super(itemView);
             mPhoto = (ImageView) itemView.findViewById(R.id.image_photo);
+            mPhoto.setOnClickListener(this);
         }
 
         public void bindDrawable(@NonNull Drawable drawable) {
             mPhoto.setImageDrawable(drawable);
+        }
+
+        public void setBigUrl(String bigUrl) {
+            mBigUrl = bigUrl;
+        }
+
+        @Override
+        public void onClick(View view) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+            final ImageView imageView = new ImageView(getActivity());
+            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            builder.setView(imageView);
+            builder.setPositiveButton(R.string.close, null);
+            builder.create().show();
+
+            Log.d(TAG,"mBigUrl : " + mBigUrl);
+
+            new AsyncTask<String, Void, Bitmap>() {
+                @Override
+                protected Bitmap doInBackground(String... urls) {
+                    FlickrFetcher flickrFetcher = new FlickrFetcher();
+                    Bitmap bm = null;
+                    try {
+                        byte[] bytes = flickrFetcher.getUrlBytes(urls[0]);
+                        bm = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                    } catch (IOException e) {
+                        Log.e(TAG,"error reading bitmap");
+                        return null;
+                    }
+                    return bm;
+                }
+
+                @Override
+                protected void onPostExecute(Bitmap img) {
+                    imageView.setImageDrawable(new BitmapDrawable(getResources(), img));
+                }
+            }.execute(mBigUrl);
         }
 
 //        public void bindGalleryItem(GalleryItem galleryItem) {
@@ -284,11 +328,12 @@ public class PhotoGalleryFragment extends Fragment{
         @Override
         public void onBindViewHolder(PhotoHolder holder, int position) {
 //            holder.bindGalleryItem(mGalleryItemList.get(position));
-            Drawable smileyDrawable = ResourcesCompat.getDrawable(getResources(),R.drawable.bear,null);
+            Drawable smileyDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.bear, null);
 
             GalleryItem galleryItem = mGalleryItemList.get(position);
-            Log.d(TAG,"bind position # " + position + " , url " + galleryItem.getUrl());
+            Log.d(TAG, "bind position # " + position + " , url " + galleryItem.getUrl());
 
+            holder.setBigUrl(galleryItem.getBigSizeUrl());
             holder.bindDrawable(smileyDrawable);
 
             if (mMemoryCache.get(galleryItem.getUrl()) != null) {
