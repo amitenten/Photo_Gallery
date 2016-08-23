@@ -15,5 +15,10 @@
         android:title="@string/refresh"
         android:id="@+id/menu_item_refresh_photo"
         app:showAsAction="never" />
+    <item
+        android:title="@string/start_polling"
+        android:id="@+id/menu_toggle_polling"
+        app:showAsAction="never" />
+
 
 </menu>

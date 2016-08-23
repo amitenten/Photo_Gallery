@@ -1,6 +1,7 @@
 package com.augmentis.ayp.photogallery;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -209,6 +210,14 @@ public class PhotoGalleryFragment extends Fragment{
                 searchView.setQuery(mSearchKey, false);
             }
         });
+
+        //render polling
+        MenuItem menuPolling = menu.findItem(R.id.menu_toggle_polling);
+        if (PollService.isServiceAlamOn(getActivity())){
+            menuPolling.setTitle(R.string.stop_polling);
+        } else {
+            menuPolling.setTitle(R.string.start_polling);
+        }
     }
 
     /**
@@ -226,6 +235,16 @@ public class PhotoGalleryFragment extends Fragment{
                 mSearchKey = null;
                 loadPhotos();
                 return true;
+            case R.id.menu_toggle_polling:
+                Log.d(TAG, "Start/Stop Intent Service");
+                boolean shouldStart = !PollService.isServiceAlamOn(getActivity());
+                /*Intent i = PollService.newIntent(getActivity());
+                getActivity().startService(i);*/
+                Log.d(TAG, (shouldStart) ?"Start":"Stop" + " Intent Service");
+                PollService.setServiceAlarm(getActivity(), shouldStart);
+                getActivity().invalidateOptionsMenu(); //refresh menu
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
