@@ -35,7 +35,7 @@ import java.util.List;
 /**
  * Created by Wilailux on 8/16/2016.
  */
-public class PhotoGalleryFragment extends Fragment{
+public class PhotoGalleryFragment extends VisibleFragment{
 
     private String mSearchKey;
 

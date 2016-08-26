@@ -11,6 +11,17 @@ public class PhotoGalleryPreferance {
     private static final String TAG = "PhotoGalleryPreferance";
     private static final String PREF_SEARCH_KEY = "SEARCH_KEY";
     private static final String PREF_LAST_ID = "LAST_ID";
+    private static final String PREF_IS_ALARM_ON = "PREF_ALARM_ON";
+
+    public static void setStoredIsAlarmOn(Context context, Boolean isOn) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        pref.edit().putBoolean(PREF_IS_ALARM_ON, isOn).apply();
+    }
+
+    public static Boolean getStoredIsAlarmOn(Context context) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        return pref.getBoolean(PREF_IS_ALARM_ON, false);
+    }
 
     public static String getStoredSearchKey(Context context) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);

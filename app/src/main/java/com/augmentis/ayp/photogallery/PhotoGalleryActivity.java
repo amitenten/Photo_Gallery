@@ -16,4 +16,5 @@ public class PhotoGalleryActivity extends SingleFragmentActivity {
     public static Intent newIntent(Context ctx) {
         return new Intent(ctx,PhotoGalleryActivity.class);
     }
+
 }

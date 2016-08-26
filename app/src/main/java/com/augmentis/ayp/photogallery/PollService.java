@@ -1,5 +1,6 @@
 package com.augmentis.ayp.photogallery;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.Notification;
@@ -7,8 +8,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
@@ -23,7 +26,13 @@ import java.util.List;
 public class PollService extends IntentService {
 
     private static final String TAG = "PollService";
-    private static final int POLL_INTERVAL = 1000 * 60;
+    private static final int POLL_INTERVAL = 1000 * 1;
+
+    public static final String ACTION_SHOW_NOTIFICATION = "com.augmentis.ayp.photogallery.ACTION_SHOW_NOTIFICATION";
+
+    public static final String PERMISSION_SHOW_NOTIF = "com.augmentis.ayp.photogallery.RECEIVE_SHOW_NOTIFICATION";
+    public static final String REQUEST_CODE = "REQUEST_CODE_INTENT";
+    public static final String NOTIFICATION = "NOTIFICATION";
 
     public static Intent newIntent(Context context) {
         return new Intent(context, PollService.class);
@@ -81,12 +90,25 @@ public class PollService extends IntentService {
 
             // build noti from builder
             Notification notification = notiBuilder.build();
-            NotificationManagerCompat nm = NotificationManagerCompat.from(this);
+ /*           NotificationManagerCompat nm = NotificationManagerCompat.from(this);
             // call noti
-            nm.notify(0,notification);
+            nm.notify(0, notification);
+
+            /*new Screen().on(this);*/
+
+            sendBackgroundNotification(0, notification);
+            /*sendBroadcast(new Intent(ACTION_SHOW_NOTIFICATION), PERMISSION_SHOW_NOTIF);*/
         }
 
         PhotoGalleryPreferance.setStoredLastId(this, newestId);
+    }
+
+    private void sendBackgroundNotification(int requestCode,Notification notification) {
+        Intent intent = new Intent(ACTION_SHOW_NOTIFICATION);
+        intent.putExtra(REQUEST_CODE,requestCode);
+        intent.putExtra(NOTIFICATION,notification);
+
+        sendOrderedBroadcast(intent, PERMISSION_SHOW_NOTIF,null,null, Activity.RESULT_OK,null,null);
     }
 
     public static void setServiceAlarm(Context c, Boolean isOn) {
@@ -103,13 +125,18 @@ public class PollService extends IntentService {
         } else {
             am.cancel(pi); //cancel interval call
             pi.cancel(); // cancel pending intent call
+
+            Log.d(TAG, "Run by schedule");
         }
+
+        PhotoGalleryPreferance.setStoredIsAlarmOn(c, isOn);
     }
 
     public static boolean isServiceAlamOn(Context context) {
-        Intent i = PollService.newIntent(context);
-        PendingIntent pi = PendingIntent.getService(context, 0, i, PendingIntent.FLAG_NO_CREATE);
-        return pi != null;
+            Intent i = PollService.newIntent(context);
+            PendingIntent pi = PendingIntent.getService(context, 0, i, PendingIntent.FLAG_NO_CREATE);
+
+            return pi != null;
     }
 
     private boolean isNetworkAvailableAndConnected() {

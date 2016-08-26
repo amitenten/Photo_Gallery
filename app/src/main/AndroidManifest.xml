@@ -2,8 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.augmentis.ayp.photogallery">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <permission
+        android:name="com.augmentis.ayp.photogallery.RECEIVE_SHOW_NOTIFICATION"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="com.augmentis.ayp.photogallery.RECEIVE_SHOW_NOTIFICATION" />
 
     <application
         android:allowBackup="true"
@@ -19,7 +26,25 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".PollService"/>
+        <service android:name=".PollService" />
+
+        <receiver
+            android:name=".PollStarterReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".NotificationReceive"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter android:priority="-999">
+                <action android:name="com.augmentis.ayp.photogallery.ACTION_SHOW_NOTIFICATION" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
