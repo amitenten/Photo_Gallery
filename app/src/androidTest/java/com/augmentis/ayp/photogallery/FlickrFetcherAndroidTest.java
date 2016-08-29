@@ -63,5 +63,6 @@ public class FlickrFetcherAndroidTest {
         Log.d(TAG,"test Search : size = " +galleryItemsList.size());
         assertThat(galleryItemsList.size(),not(0));
         assertThat(galleryItemsList.get(0).getBigSizeUrl(),notNullValue());
+        assertThat(galleryItemsList.get(0).getOwner(),notNullValue());
     }
 }

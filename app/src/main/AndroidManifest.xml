@@ -45,6 +45,11 @@
                 <action android:name="com.augmentis.ayp.photogallery.ACTION_SHOW_NOTIFICATION" />
             </intent-filter>
         </receiver>
+
+        <activity android:name=".PhotoPageActivity"
+            android:label="@string/in_app_browser"
+            android:parentActivityName=".PhotoGalleryActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
     </application>
 
 </manifest>
