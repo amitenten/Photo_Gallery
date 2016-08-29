@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +21,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.util.LruCache;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,6 +29,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -268,7 +271,9 @@ public class PhotoGalleryFragment extends VisibleFragment{
     /**
      * ViewHolder
      */
-    class PhotoHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class PhotoHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
+            View.OnCreateContextMenuListener,
+            MenuItem.OnMenuItemClickListener {
 
 //        TextView mText;
         ImageView mPhoto;
@@ -278,6 +283,8 @@ public class PhotoGalleryFragment extends VisibleFragment{
             super(itemView);
             mPhoto = (ImageView) itemView.findViewById(R.id.image_photo);
             mPhoto.setOnClickListener(this);
+
+            itemView.setOnCreateContextMenuListener(this);
         }
 
         public void bindDrawable(@NonNull Drawable drawable) {
@@ -320,6 +327,20 @@ public class PhotoGalleryFragment extends VisibleFragment{
                     imageView.setImageDrawable(new BitmapDrawable(getResources(), img));
                 }
             }.execute(mBigUrl);
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            MenuItem menuItem = menu.add(R.string.open_by_url);
+            menu.setHeaderTitle(mBigUrl);
+            menuItem.setOnMenuItemClickListener(this);
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mBigUrl));
+            startActivity(browserIntent);
+            return false;
         }
 
 //        public void bindGalleryItem(GalleryItem galleryItem) {
