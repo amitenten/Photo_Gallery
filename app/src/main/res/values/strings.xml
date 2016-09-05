@@ -17,4 +17,8 @@
     <string name="open_with_external_browser">Open with external browser</string>
     <string name="open_with_internal_browser">Open with in-App browser</string>
     <string name="in_app_browser">In-App Browser</string>
+    <string name="setting">Setting</string>
+    <string name="mnu_setting">Setting</string>
+    <string name="photo_map">Photo Maps</string>
+    <string name="open_in_map">Open in Maps</string>
 </resources>

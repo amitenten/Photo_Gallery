@@ -20,5 +20,9 @@
         android:id="@+id/menu_toggle_polling"
         app:showAsAction="never" />
 
+    <item
+        android:title="@string/mnu_setting"
+        android:id="@+id/menu_setting"
+        app:showAsAction="never" />
 
 </menu>

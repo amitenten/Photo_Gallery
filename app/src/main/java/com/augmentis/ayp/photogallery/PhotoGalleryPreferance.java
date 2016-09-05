@@ -12,6 +12,21 @@ public class PhotoGalleryPreferance {
     private static final String PREF_SEARCH_KEY = "SEARCH_KEY";
     private static final String PREF_LAST_ID = "LAST_ID";
     private static final String PREF_IS_ALARM_ON = "PREF_ALARM_ON";
+    private static final String PREF_USE_GPS = "use_gps";
+
+    public static SharedPreferences mySharedPref(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context);
+    }
+
+    public static void setUseGPS(Context context, Boolean use_gps) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        pref.edit().putBoolean(PREF_USE_GPS, use_gps).apply();
+    }
+
+    public static Boolean getUseGPS(Context context) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        return pref.getBoolean(PREF_USE_GPS, false);
+    }
 
     public static void setStoredIsAlarmOn(Context context, Boolean isOn) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);

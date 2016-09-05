@@ -12,6 +12,24 @@ public class GalleryItem {
     public String mUrl;
     private String bigSizeUrl;
     private String mOwner;
+    private String mLat;
+    private String mLon;
+
+    public String getLat() {
+        return mLat;
+    }
+
+    public void setLat(String Lat) {
+        mLat = Lat;
+    }
+
+    public String getLon() {
+        return mLon;
+    }
+
+    public void setLon(String Lon) {
+        mLon = Lon;
+    }
 
     public void setId(String id) {
         mId = id;

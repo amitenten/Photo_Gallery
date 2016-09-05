@@ -1,5 +1,7 @@
 package com.augmentis.ayp.photogallery;
 
+import android.content.ClipData;
+import android.location.Location;
 import android.net.Uri;
 import android.util.Log;
 
@@ -93,12 +95,24 @@ public class FlickrFetcher {
         if (METHOD_SEARCH.equalsIgnoreCase(method)) {
             builder.appendQueryParameter("text", param[0]);
         }
+        if (param.length > 1) {
+            builder.appendQueryParameter("lat",param[1]);
+            builder.appendQueryParameter("lon",param[2]);
+        }
         Uri completeUrl = builder.build();
         String url = completeUrl.toString();
 
         Log.i(TAG,"Run URL: " + url);
 
         return url;
+    }
+
+    public void fetchPhoto(List<GalleryItem> items, String url) throws IOException, JSONException{
+
+            String jsonStr = queryItem(url);
+            if (jsonStr != null) {
+                parseJSON(items,jsonStr);
+            }
     }
 
     /**
@@ -109,10 +123,25 @@ public class FlickrFetcher {
     public void searchPhotos(List<GalleryItem> items, String key) {
         try {
             String url = buildUri(METHOD_SEARCH, key);
-            String jsonStr = queryItem(url);
-            if (jsonStr != null) {
-                parseJSON(items,jsonStr);
-            }
+            fetchPhoto(items, url);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(TAG,"Failed to fetch item",e);
+        }
+    }
+
+    /**
+     *
+     * @param items
+     * @param key
+     * @param lat
+     * @param lon
+     */
+    public void searchPhotos(List<GalleryItem> items, String key, String lat, String lon) {
+        try {
+            String url = buildUri(METHOD_SEARCH, key, lat, lon);
+            fetchPhoto(items, url);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -127,10 +156,7 @@ public class FlickrFetcher {
     public void getRecentPhotos(List<GalleryItem> items ) {
         try {
             String url = buildUri(METHOD_GET_RECENT);
-            String jsonStr = queryItem(url);
-        if (jsonStr != null) {
-                parseJSON(items,jsonStr);
-            }
+            fetchPhoto(items, url);
 
         } catch (Exception e) {
             e.printStackTrace();
