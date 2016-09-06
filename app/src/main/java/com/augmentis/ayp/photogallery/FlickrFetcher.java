@@ -90,7 +90,7 @@ public class FlickrFetcher {
         builder.appendQueryParameter("api_key",API_KEY);
         builder.appendQueryParameter("format","json");
         builder.appendQueryParameter("nojsoncallback","1");
-        builder.appendQueryParameter("extras","url_s,url_z");
+        builder.appendQueryParameter("extras","url_s,url_z,geo");
 
         if (METHOD_SEARCH.equalsIgnoreCase(method)) {
             builder.appendQueryParameter("text", param[0]);
@@ -180,25 +180,26 @@ public class FlickrFetcher {
 
         for (int i = 0; i < photoListJson.length(); i++) {
 
-            JSONObject jsonPhotoIem = photoListJson.getJSONObject(i);
+            JSONObject jsonPhotoItem = photoListJson.getJSONObject(i);
 
             GalleryItem item = new GalleryItem();
 
-            item.setId(jsonPhotoIem.getString("id"));
-            item.setTitle(jsonPhotoIem.getString("title"));
-            item.setOwner(jsonPhotoIem.getString("owner"));
+            item.setId(jsonPhotoItem.getString("id"));
+            item.setTitle(jsonPhotoItem.getString("title"));
+            item.setOwner(jsonPhotoItem.getString("owner"));
 
-            if(!jsonPhotoIem.has("url_s")) {
+            if(!jsonPhotoItem.has("url_s")) {
                 continue;
             }
+            item.setUrl(jsonPhotoItem.getString("url_s"));
 
-            item.setUrl(jsonPhotoIem.getString("url_s"));
-
-            if(!jsonPhotoIem.has("url_z")) {
+            if(!jsonPhotoItem.has("url_z")) {
                 continue;
             }
+            item.setBigSizeUrl(jsonPhotoItem.getString("url_z"));
 
-            item.setBigSizeUrl(jsonPhotoIem.getString("url_z"));
+            item.setLat(jsonPhotoItem.getString("latitude"));
+            item.setLon(jsonPhotoItem.getString("longitude"));
 
             newGalleryItemList.add(item);
 
